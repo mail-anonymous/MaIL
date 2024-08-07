@@ -1,0 +1,12 @@
+python run_benchmark.py  --config-name=benchmark_libero10 \
+            --multirun agents=bc_mamba_cross \
+            agent_name=bc_mamba_cross \
+            group=bc_mamba_cross \
+            obs_seq=1,5 \
+            n_layer_encoder=8 \
+            n_layer_decoder=10 \
+            mamba_encoder_cfg.d_state=8 \
+            mamba_decoder_cfg.d_state=8 \
+            enc_conv=2 \
+            dec_conv=2 \
+            seed=0,1,2

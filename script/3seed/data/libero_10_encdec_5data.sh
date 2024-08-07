@@ -1,0 +1,9 @@
+python run_benchmark.py  --config-name=benchmark_libero10 \
+            --multirun agents=oc_ddpm_agent \
+            agent_name=ddpm_encdec \
+            wandb.project=3_seed \
+            group=ddpm_encdec_30data \
+            obs_seq=1,5 \
+            decoder_n_layer=6 \
+            num_data=5,20 \
+            seed=0,1,2

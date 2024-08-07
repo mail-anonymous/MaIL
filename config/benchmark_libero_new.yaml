@@ -1,0 +1,204 @@
+defaults:
+  - agents: bc_transformer
+agent_name: ddpm_mamba_cross
+
+task_suite: libero_object
+task_name: multi_task
+#crop_shape: (18, 24)
+log_dir: MaIL/logs/${task_suite}/${task_name}
+
+#libero dataset config
+obs_keys: rgb
+dataset_keys:
+  - actions
+  - dones
+  - obs
+  - rewards
+  - states
+#  - crop
+# if hdf5_filter_key is not specified, it will use all data to initialize the trainset
+hdf5_filter_key: #train
+# hdf5_validation_filter_key is used to initialize the valset, but here is useless
+hdf5_validation_filter_key: #valid
+enable_valid: True
+padding_sequence: False
+
+observation:
+  modalities: &obs_modalities_list
+    obs:
+      low_dim:
+        - ee_ori
+        - ee_pos
+        - gripper_states
+        - joint_states
+      rgb:
+        - agentview_rgb
+        - eye_in_hand_rgb
+      depth: []
+      scan: []
+    goal:
+      low_dim: []
+      rgb: []
+      depth: []
+      scan: []
+
+dataset_path: ???
+
+# insert wandb here
+wandb:
+  entity: ???
+  project: 3_seed
+
+group: ${task_suite}_${task_name}_${agent_name}_combination_based_on_current_obs
+
+hydra:
+  mode: MULTIRUN
+  run:
+    dir: ${log_dir}/runs/${agent_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    chdir: True
+  sweep:
+    dir: ${log_dir}/sweeps/${agent_name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.override_dirname}
+
+seed: 4
+n_cores: 5
+
+diff_steps: 16
+
+# decoder only
+trans_n_head: 4
+trans_n_layer: 4
+
+# encoder-decoder
+encoder_n_layer: 4
+decoder_n_layer: 4
+
+# mamba only
+n_layers: 16
+
+mamba_ssm_cfg:
+  d_state: 16
+  d_conv: 4
+  expand: 2
+  dt_rank: "auto"
+  dt_min: 0.001
+  dt_max: 0.1
+  dt_init: "random"
+  dt_scale: 1.0
+  dt_init_floor: 1e-4
+  conv_bias: True
+  bias: False
+  use_fast_path: True
+
+# mamba-cross
+n_layer_decoder: 10
+n_layer_encoder: 10
+
+enc_conv: 2
+dec_conv: 2
+
+mamba_encoder_cfg:
+  d_state: 8
+  d_conv: ${enc_conv}
+  expand: 2
+  dt_rank: "auto"
+  dt_min: 0.001
+  dt_max: 0.1
+  dt_init: "random"
+  dt_scale: 1.0
+  dt_init_floor: 1e-4
+  conv_bias: True
+  bias: False
+  use_fast_path: True
+
+mamba_decoder_cfg:
+  d_state: 8
+  d_conv: ${dec_conv}
+  expand: 2
+  dt_rank: "auto"
+  dt_min: 0.001
+  dt_max: 0.1
+  dt_init: "random"
+  dt_scale: 1.0
+  dt_init_floor: 1e-4
+  conv_bias: True
+  bias: False
+  use_fast_path: True
+
+# Training
+train_batch_size: 256
+val_batch_size: 256
+num_workers: 2
+device: 'cuda'
+epoch: 50
+eval_every_n_epochs: 50
+scale_data: True
+
+num_data: 10
+
+# Data Augmentation
+data_aug: False
+aug_factor: 0.1
+
+# Environment
+obs_dim: 64
+action_dim: 7
+state_dim: 110
+max_len_data: 520
+
+# train_action_seq + obs_seq - 1 = window_size
+# inference_action_seq <= train_action_seq
+window_size: ${add:${obs_seq},4}
+obs_seq: 5
+train_action_seq: 5
+inference_action_seq: ${train_action_seq}
+
+trainset:
+  _target_: dataset.multi_task_dataset_aug.MultiTaskDataset
+  data_directory: ${dataset_path}
+  obs_keys: ${obs_keys}
+  obs_modalities: *obs_modalities_list
+  dataset_keys: ${dataset_keys}
+  filter_by_attribute: ${hdf5_filter_key}
+  padding: ${padding_sequence}
+  obs_dim: ${obs_dim}
+  action_dim: ${action_dim}
+  state_dim: ${state_dim}
+  max_len_data: ${max_len_data}
+  window_size: ${window_size}
+  data_aug: ${data_aug}
+  aug_factor: ${aug_factor}
+  num_data: ${num_data}
+valset:
+  _target_: dataset.multi_task_dataset_aug.MultiTaskDataset
+  data_directory: ${dataset_path}
+  obs_keys: ${obs_keys}
+  obs_modalities: *obs_modalities_list
+  dataset_keys: ${dataset_keys}
+  filter_by_attribute: ${hdf5_validation_filter_key}
+  padding: ${padding_sequence}
+  obs_dim: ${obs_dim}
+  action_dim: ${action_dim}
+  state_dim: ${state_dim}
+  max_len_data: ${max_len_data}
+  window_size: ${window_size}
+  data_aug: ${data_aug}
+  aug_factor: ${aug_factor}
+  num_data: ${num_data}
+
+simulation:
+  _target_: simulation.benchmark_sim_new.MultiTaskSim
+  _convert_: all
+  task_suite: ${task_suite}
+  use_eye_in_hand: True
+  seed: ${seed}
+  device: ${device}
+  render: True
+  n_cores: ${n_cores}
+  data_aug: ${data_aug}
+  aug_factor: ${aug_factor}
+  num_episode: 20
+  max_step_per_episode: 600
+  camera_shape: [128, 128]
+  nms: 0.1

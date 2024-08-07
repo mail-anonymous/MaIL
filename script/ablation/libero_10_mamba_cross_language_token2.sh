@@ -1,0 +1,11 @@
+python run_benchmark.py  --config-name=benchmark_libero_goal \
+            --multirun agents=goal_mamba_cross_agent \
+            agent_name=ddpm_mamba_cross \
+            task_suite=libero_10 \
+            wandb.project=ablation \
+            group=language_token \
+            hydra.launcher.name=lt_l_c \
+            obs_seq=1 \
+            mamba_encoder_cfg.d_state=16 \
+            enc_conv=4 \
+            seed=0,1,2

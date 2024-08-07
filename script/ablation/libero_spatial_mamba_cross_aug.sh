@@ -1,0 +1,13 @@
+python run_benchmark.py  --config-name=benchmark_libero_new \
+            --multirun agents=oc_ddpm_mamba_cross \
+            agent_name=ddpm_mamba_cross \
+            wandb.project=ablation \
+            group=data_aug \
+            task_suite=libero_spatial,libero_object \
+            hydra.launcher.name=da_cs \
+            mamba_decoder_cfg.d_state=16 \
+            enc_conv=4 \
+            dec_conv=2 \
+            data_aug=True \
+            aug_factor=0.3 \
+            seed=0,1,2

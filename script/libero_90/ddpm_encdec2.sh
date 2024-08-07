@@ -1,0 +1,9 @@
+python run_benchmark.py  --config-name=benchmark_libero_goal \
+            --multirun agents=goal_ddpm_encdec_agent \
+            agent_name=ddpm_encdec_goal \
+            task_suite=libero_90 \
+            group=libero_90_ddpm_encdec_goal \
+            obs_seq=5 \
+            train_batch_size=128 \
+            decoder_n_layer=6 \
+            seed=0,1,2

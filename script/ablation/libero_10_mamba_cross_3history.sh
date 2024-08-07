@@ -1,0 +1,13 @@
+python run_benchmark.py  --config-name=benchmark_libero10 \
+            --multirun agents=oc_ddpm_mamba_cross \
+            agent_name=ddpm_mamba_cross \
+            wandb.project=ablation \
+            group=3_history \
+            hydra.launcher.name=3h_cross \
+            obs_seq=3 \
+            n_layer_encoder=8 \
+            mamba_encoder_cfg.d_state=8 \
+            mamba_decoder_cfg.d_state=8 \
+            enc_conv=2 \
+            dec_conv=2 \
+            seed=0,1,2

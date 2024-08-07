@@ -1,0 +1,13 @@
+python run_benchmark.py  --config-name=benchmark_libero_goal \
+            --multirun agents=goal_mamba_cross_agent \
+            agent_name=ddpm_mamba_cross \
+            task_suite=libero_90 \
+            group=libero_90_ddpm_mamba_cross_goal \
+            obs_seq=5 \
+            train_batch_size=128 \
+            n_layer_encoder=8 \
+            mamba_encoder_cfg.d_state=8 \
+            mamba_decoder_cfg.d_state=8 \
+            enc_conv=2 \
+            dec_conv=2 \
+            seed=0,1,2

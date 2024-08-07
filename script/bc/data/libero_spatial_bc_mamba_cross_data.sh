@@ -1,0 +1,10 @@
+python run_benchmark.py  --config-name=benchmark_libero_new \
+            --multirun agents=bc_mamba_cross \
+            agent_name=bc_mamba_cross \
+            task_suite=libero_spatial \
+            wandb.project=ablation \
+            group=data_increase \
+            obs_seq=1,5 \
+            n_layer_encoder=8 \
+            num_data=5,30,50 \
+            seed=0,1,2

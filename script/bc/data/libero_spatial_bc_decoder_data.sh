@@ -1,0 +1,10 @@
+python run_benchmark.py  --config-name=benchmark_libero_new \
+            --multirun agents=bc_decoder \
+            agent_name=bc_decoder \
+            task_suite=libero_spatial \
+            wandb.project=ablation \
+            group=data_increase \
+            obs_seq=1,5 \
+            trans_n_layer=8 \
+            num_data=5,30,50 \
+            seed=0,1,2

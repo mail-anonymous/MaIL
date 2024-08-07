@@ -1,0 +1,9 @@
+python run_benchmark.py  --config-name=benchmark_libero_goal \
+            --multirun agents=goal_bc_decoder \
+            agent_name=bc_decoder \
+            task_suite=libero_90 \
+            wandb.project=3_seed \
+            group=bc_decoder_goal \
+            obs_seq=5 \
+            trans_n_layer=8 \
+            seed=0,1,2

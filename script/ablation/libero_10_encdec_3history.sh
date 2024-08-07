@@ -1,0 +1,9 @@
+python run_benchmark.py  --config-name=benchmark_libero10 \
+            --multirun agents=oc_ddpm_agent \
+            agent_name=ddpm_encdec \
+            wandb.project=ablation \
+            group=3_history \
+            hydra.launcher.name=3h_encdec \
+            obs_seq=3 \
+            decoder_n_layer=6 \
+            seed=0,1,2

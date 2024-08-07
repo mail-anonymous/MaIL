@@ -1,0 +1,11 @@
+python run_benchmark.py  --config-name=benchmark_libero_new \
+            --multirun agents=oc_ddpm_agent \
+            agent_name=ddpm_encdec \
+            wandb.project=ablation \
+            group=data_aug \
+            task_suite=libero_spatial,libero_object \
+            hydra.launcher.name=da_eds \
+            decoder_n_layer=6 \
+            data_aug=True \
+            aug_factor=0.3 \
+            seed=0,1,2
